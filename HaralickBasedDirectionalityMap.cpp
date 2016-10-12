@@ -355,7 +355,7 @@ int main(int argc, char* argv[])
 		OutString += "Tile Y\tTileX\t";
 		OutString += "Angle Contrast\tAngle Energy\tAngle Homogeneity\tAngle Correlation\tAngle\t";
 		OutString += "Mean Intensity\tTile min norm\tTile max norm\t";
-		OutString += "Best Angle Contrast Count\tBest Angle Energy Count\tBest Angle Homogeneity Count\tBest Angle Correlation Count\t";
+		OutString += "Best Angle Contrast Count\tBest Angle Energy Count\tBest Angle Homogeneity Count\tBest Angle Correlation Count\tBest Angle Count";
 		OutString += "\n";
 		for (int y = ProcOptions.offsetTileY; y <= (maxY - ProcOptions.offsetTileY); y += ProcOptions.shiftTileY)
 		{
@@ -459,17 +459,17 @@ int main(int argc, char* argv[])
 						if (ProcOptions.useEnergy || 1)
 						{
 							bestAngleEnergy = FindBestAngleMax(Energy, stepNr);
-							AnglesEne[bestAngleContrast]++;
+							AnglesEne[bestAngleEnergy]++;
 						}
 						if (ProcOptions.useHomogeneity || 1)
 						{
 							bestAngleHomogenity = FindBestAngleMax(Homogenity, stepNr);
-							AnglesHom[bestAngleContrast]++;
+							AnglesHom[bestAngleHomogenity]++;
 						}
 						if (ProcOptions.useCorrelation || 1)
 						{
 							bestAngleCorrelation = FindBestAngleMax(Correlation, stepNr);
-							AnglesCor[bestAngleContrast]++;
+							AnglesCor[bestAngleCorrelation]++;
 						}
 
 						// combination of features
@@ -620,7 +620,7 @@ int main(int argc, char* argv[])
 					cout << "NaN";
 				cout << "\t";
 
-
+				/*
 				cout << " mean =  " << to_string(meanSmallIm) << "\t";
 				cout << " min norm = " << to_string(minNorm) << "\t";
 				cout << " max norm = " << to_string(maxNorm) << "\t";
@@ -630,7 +630,7 @@ int main(int argc, char* argv[])
 				cout << "  c = " << ItoStrLS(maxAngle, 2) << "\t";
 				cout << "  c = " << ItoStrLS(maxAngle, 2) << "\t";
 				cout << "  c = " << ItoStrLS(maxAngle, 2) << "\t";
-
+				*/
 				cout << "\n";
 
 				// file output
