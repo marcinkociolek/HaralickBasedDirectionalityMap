@@ -164,11 +164,18 @@ int main(int argc, char* argv[])
 	float *Correlation = new float[stepNr];
 	float *Homogenity = new float[stepNr];
 
+	float *EnergyAvg = new float[stepNr];
+	float *ContrastAvg = new float[stepNr];
+	float *CorrelationAvg = new float[stepNr];
+	float *HomogenityAvg = new float[stepNr];
+
 	int *Angles = new int[stepNr]; // vector for best angles histogtam
 	int *AnglesCon = new int[stepNr];
 	int *AnglesEne = new int[stepNr];
 	int *AnglesHom = new int[stepNr];
 	int *AnglesCor = new int[stepNr];
+
+	int *AnglesAvg = new int[stepNr]; // vector for best angles histogtam
 	// check how many features to compute
 	float featCount = 0;
 	if (ProcOptions.useContrast)
@@ -354,6 +361,7 @@ int main(int argc, char* argv[])
 
 		OutString += "Tile Y\tTileX\t";
 		OutString += "Angle Contrast\tAngle Energy\tAngle Homogeneity\tAngle Correlation\tAngle\t";
+		OutString += "Angle Contrast\tAngle Energy Avg\tAngle Homogeneity Avg\tAngle Correlation Avg\t";
 		OutString += "Mean Intensity\tTile min norm\tTile max norm\t";
 		OutString += "Best Angle Contrast Count\tBest Angle Energy Count\tBest Angle Homogeneity Count\tBest Angle Correlation Count\tBest Angle Count";
 		OutString += "\n";
@@ -431,6 +439,13 @@ int main(int argc, char* argv[])
 				int bestAngleCor;
 				int maxAngleCor;
 
+
+				int bestAngleConAvg;
+				int bestAngleEneAvg;
+				int bestAngleHomAvg;
+				int bestAngleCorAvg;
+
+
 				if (meanCondition)
 				{
 
@@ -446,32 +461,35 @@ int main(int argc, char* argv[])
 								COM = COMCardone4(SmallIm, offset, angle, ProcOptions.binCount, maxNorm, minNorm, ProcOptions.interpolation);
 							else
 								COM = COMCardoneRoi(SmallIm, Roi, offset, angle, ProcOptions.binCount, maxNorm, minNorm, ProcOptions.interpolation, 1);
-							COMParams(COM, &Contrast[angleIndex], &Energy[angleIndex], &Homogenity[angleIndex], &Correlation[angleIndex]);
+							float tmpContrast, tmpEnergy, tmpHomogenity, tmpCorrelation;
+							//COMParams(COM, &Contrast[angleIndex], &Energy[angleIndex], &Homogenity[angleIndex], &Correlation[angleIndex]);
+							COMParams(COM, &tmpContrast, &tmpEnergy, &tmpHomogenity, &tmpCorrelation);
+							Contrast[angleIndex] = tmpContrast;
+							Energy[angleIndex] = tmpEnergy;
+							Homogenity[angleIndex] = tmpHomogenity;
+							Correlation[angleIndex] = tmpCorrelation;
+
+							ContrastAvg[angleIndex] += tmpContrast;
+							EnergyAvg[angleIndex] += tmpEnergy;
+							HomogenityAvg[angleIndex] += tmpHomogenity;
+							CorrelationAvg[angleIndex] = +tmpCorrelation;
+
 						}
-						// best angle for ofset
+						// voting best angle for ofset
 						int bestAngleContrast, bestAngleEnergy, bestAngleHomogenity, bestAngleCorrelation;
 
-						if (ProcOptions.useContrast || 1)
-						{
-							bestAngleContrast = FindBestAngleMin(Contrast, stepNr);
-							AnglesCon[bestAngleContrast]++;
-						}
-						if (ProcOptions.useEnergy || 1)
-						{
-							bestAngleEnergy = FindBestAngleMax(Energy, stepNr);
-							AnglesEne[bestAngleEnergy]++;
-						}
-						if (ProcOptions.useHomogeneity || 1)
-						{
-							bestAngleHomogenity = FindBestAngleMax(Homogenity, stepNr);
-							AnglesHom[bestAngleHomogenity]++;
-						}
-						if (ProcOptions.useCorrelation || 1)
-						{
-							bestAngleCorrelation = FindBestAngleMax(Correlation, stepNr);
-							AnglesCor[bestAngleCorrelation]++;
-						}
+						bestAngleContrast = FindBestAngleMin(Contrast, stepNr);
+						AnglesCon[bestAngleContrast]++;
 
+						bestAngleEnergy = FindBestAngleMax(Energy, stepNr);
+						AnglesEne[bestAngleEnergy]++;
+						
+						bestAngleHomogenity = FindBestAngleMax(Homogenity, stepNr);
+						AnglesHom[bestAngleHomogenity]++;
+						
+						bestAngleCorrelation = FindBestAngleMax(Correlation, stepNr);
+						AnglesCor[bestAngleCorrelation]++;
+						
 						// combination of features
 						if (ProcOptions.useContrast)
 							Angles[bestAngleContrast]++;
@@ -482,6 +500,13 @@ int main(int argc, char* argv[])
 						if (ProcOptions.useCorrelation)
 							Angles[bestAngleCorrelation]++;
 					}
+					// best angle for avg
+					
+					bestAngleConAvg = FindBestAngleMin(Contrast, stepNr);
+					bestAngleEneAvg = FindBestAngleMax(Energy, stepNr);
+					bestAngleHomAvg = FindBestAngleMax(Homogenity, stepNr);
+					bestAngleCorAvg = FindBestAngleMax(Correlation, stepNr);
+
 
 					// look for most occurring direction
 					bestAngle = 0;
@@ -539,10 +564,7 @@ int main(int argc, char* argv[])
 						}
 					}
 
-
 					// show line on image
-					//int barCenterX = ProcOptions.maxTileX / 2 + x;
-					//int barCenterY = ProcOptions.maxTileY / 2 + y;
 
 					double lineLength;
 					if (ProcOptions.lineLengthPropToConfidence)
@@ -552,23 +574,16 @@ int main(int argc, char* argv[])
 					int lineOffsetX = (int)round(lineLength *  sin((double)(bestAngle)*ProcOptions.angleStep* PI / 180.0));
 					int lineOffsetY = (int)round(lineLength * cos((double)(bestAngle)*ProcOptions.angleStep* PI / 180.0));
 
-					//
-
-
-					if ((maxAngle >= ProcOptions.minHit) && meanCondition)
+					if (maxAngle >= ProcOptions.minHit)
 					{
 						//line(ImToShow, Point(barCenterX - lineOffsetX, barCenterY - lineOffsetY), Point(barCenterX + lineOffsetX, barCenterY + lineOffsetY), Scalar(0, 0.0, 0.0, 0.0), ProcOptions.imposedLineThickness);
 						line(ImToShow, Point(x - lineOffsetX, y - lineOffsetY), Point(x + lineOffsetX, y + lineOffsetY), Scalar(0, 0.0, 0.0, 0.0), ProcOptions.imposedLineThickness);
 					}
 
-
-
 					if (ProcOptions.displayResult)
 					{
 						imshow("Image", ImToShow);
 					}
-
-
 
 					if (ProcOptions.displaySmallImage)
 					{
@@ -578,8 +593,6 @@ int main(int argc, char* argv[])
 						line(SmallImToShow, Point(SmallImToShow.cols / 2 - lineOffsetX, SmallImToShow.rows / 2 - lineOffsetY), Point(SmallImToShow.cols / 2 + lineOffsetX, SmallImToShow.rows / 2 + lineOffsetY), Scalar(0, 0.0, 0.0, 0.0), ProcOptions.imposedLineThickness);
 						imshow("ImageSmall", ShowSolidRegionOnImage(GetContour5(Roi), SmallImToShow));
 					}
-
-
 				}
 				
 				// console output
@@ -620,17 +633,6 @@ int main(int argc, char* argv[])
 					cout << "NaN";
 				cout << "\t";
 
-				/*
-				cout << " mean =  " << to_string(meanSmallIm) << "\t";
-				cout << " min norm = " << to_string(minNorm) << "\t";
-				cout << " max norm = " << to_string(maxNorm) << "\t";
-
-
-				cout << "  c = " << ItoStrLS(maxAngle, 2) << "\t";
-				cout << "  c = " << ItoStrLS(maxAngle, 2) << "\t";
-				cout << "  c = " << ItoStrLS(maxAngle, 2) << "\t";
-				cout << "  c = " << ItoStrLS(maxAngle, 2) << "\t";
-				*/
 				cout << "\n";
 
 				// file output
@@ -660,6 +662,17 @@ int main(int argc, char* argv[])
 					OutString += to_string((float)bestAngle * ProcOptions.angleStep) + "\t";
 				else
 					OutString += "NAN\t";
+
+				if (meanCondition)
+				{
+					OutString += to_string((float)bestAngleConAvg * ProcOptions.angleStep) + "\t";
+					OutString += to_string((float)bestAngleEneAvg * ProcOptions.angleStep) + "\t";
+					OutString += to_string((float)bestAngleHomAvg * ProcOptions.angleStep) + "\t";
+					OutString += to_string((float)bestAngleCorAvg * ProcOptions.angleStep) + "\t";
+				}
+				else
+					OutString += "NAN\tNAN\tNAN\tNAN\t";
+
 
 				OutString += to_string(meanSmallIm) + "\t" + to_string(minNorm) + "\t" + to_string(maxNorm) + "\t";
 
