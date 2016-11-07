@@ -700,7 +700,8 @@ int main(int argc, char* argv[])
 			yTileNr++;
 			xTileNr = 0;
 		}
-		imwrite(ProcOptions.OutFolderName1 + InPath.filename().stem().string() + ".bmp", ImToShow);
+		if (ProcOptions.imgOut)
+			imwrite(ProcOptions.OutFolderName1 + InPath.filename().stem().string() + ".bmp", ImToShow);
 
 		if (ProcOptions.textOut)
 		{
