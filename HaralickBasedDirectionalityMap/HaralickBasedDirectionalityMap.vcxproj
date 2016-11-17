@@ -137,7 +137,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\opencv\build\include;C:\Boost\include\boost-1_60;D:\ProjectsLib\LibMarcin;D:\ProjectsLib\tinyxml;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\opencv\build\include;C:\Boost\include\boost-1_62</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -145,33 +145,33 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\opencv\build\x64\vc12\lib;C:\Boost\lib;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_core2411.lib;opencv_highgui2411.lib;opencv_imgproc2411.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opencv_core2413.lib;opencv_highgui2413.lib;opencv_imgproc2413.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\ProjectsLib\LibMarcin\DispLib.cpp" />
-    <ClCompile Include="..\..\ProjectsLib\LibMarcin\Functions.cpp" />
-    <ClCompile Include="..\..\ProjectsLib\LibMarcin\HaralickLib.cpp" />
-    <ClCompile Include="..\..\ProjectsLib\LibMarcin\NormalizationLib.cpp" />
-    <ClCompile Include="..\..\ProjectsLib\LibMarcin\ParamFromXML.cpp" />
-    <ClCompile Include="..\..\ProjectsLib\LibMarcin\RegionU16Lib.cpp" />
-    <ClCompile Include="..\..\ProjectsLib\LibMarcin\StringFcLib.cpp" />
-    <ClCompile Include="..\..\ProjectsLib\tinyxml\tinystr.cpp" />
-    <ClCompile Include="..\..\ProjectsLib\tinyxml\tinyxml.cpp" />
-    <ClCompile Include="..\..\ProjectsLib\tinyxml\tinyxmlerror.cpp" />
-    <ClCompile Include="..\..\ProjectsLib\tinyxml\tinyxmlparser.cpp" />
+    <ClCompile Include="..\..\..\ProjectsLib\LibMarcin\DispLib.cpp" />
+    <ClCompile Include="..\..\..\ProjectsLib\LibMarcin\Functions.cpp" />
+    <ClCompile Include="..\..\..\ProjectsLib\LibMarcin\HaralickLib.cpp" />
+    <ClCompile Include="..\..\..\ProjectsLib\LibMarcin\NormalizationLib.cpp" />
+    <ClCompile Include="..\..\..\ProjectsLib\LibMarcin\ParamFromXML.cpp" />
+    <ClCompile Include="..\..\..\ProjectsLib\LibMarcin\RegionU16Lib.cpp" />
+    <ClCompile Include="..\..\..\ProjectsLib\LibMarcin\StringFcLib.cpp" />
+    <ClCompile Include="..\..\..\ProjectsLib\tinyxml\tinystr.cpp" />
+    <ClCompile Include="..\..\..\ProjectsLib\tinyxml\tinyxml.cpp" />
+    <ClCompile Include="..\..\..\ProjectsLib\tinyxml\tinyxmlerror.cpp" />
+    <ClCompile Include="..\..\..\ProjectsLib\tinyxml\tinyxmlparser.cpp" />
     <ClCompile Include="HaralickBasedDirectionalityMap.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\ProjectsLib\LibMarcin\DispLib.h" />
-    <ClInclude Include="..\..\ProjectsLib\LibMarcin\Functions.h" />
-    <ClInclude Include="..\..\ProjectsLib\LibMarcin\HaralickLib.h" />
-    <ClInclude Include="..\..\ProjectsLib\LibMarcin\NormalizationLib.h" />
-    <ClInclude Include="..\..\ProjectsLib\LibMarcin\ParamFromXML.h" />
-    <ClInclude Include="..\..\ProjectsLib\LibMarcin\RegionU16Lib.h" />
-    <ClInclude Include="..\..\ProjectsLib\LibMarcin\StringFcLib.h" />
-    <ClInclude Include="..\..\ProjectsLib\tinyxml\tinystr.h" />
-    <ClInclude Include="..\..\ProjectsLib\tinyxml\tinyxml.h" />
+    <ClInclude Include="..\..\..\ProjectsLib\LibMarcin\DispLib.h" />
+    <ClInclude Include="..\..\..\ProjectsLib\LibMarcin\Functions.h" />
+    <ClInclude Include="..\..\..\ProjectsLib\LibMarcin\HaralickLib.h" />
+    <ClInclude Include="..\..\..\ProjectsLib\LibMarcin\NormalizationLib.h" />
+    <ClInclude Include="..\..\..\ProjectsLib\LibMarcin\ParamFromXML.h" />
+    <ClInclude Include="..\..\..\ProjectsLib\LibMarcin\RegionU16Lib.h" />
+    <ClInclude Include="..\..\..\ProjectsLib\LibMarcin\StringFcLib.h" />
+    <ClInclude Include="..\..\..\ProjectsLib\tinyxml\tinystr.h" />
+    <ClInclude Include="..\..\..\ProjectsLib\tinyxml\tinyxml.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

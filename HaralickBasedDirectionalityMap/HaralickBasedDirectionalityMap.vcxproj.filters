@@ -18,66 +18,66 @@
     <ClCompile Include="HaralickBasedDirectionalityMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ProjectsLib\tinyxml\tinystr.cpp">
+    <ClCompile Include="..\..\..\ProjectsLib\LibMarcin\HaralickLib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ProjectsLib\tinyxml\tinyxml.cpp">
+    <ClCompile Include="..\..\..\ProjectsLib\LibMarcin\DispLib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ProjectsLib\tinyxml\tinyxmlerror.cpp">
+    <ClCompile Include="..\..\..\ProjectsLib\LibMarcin\Functions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ProjectsLib\tinyxml\tinyxmlparser.cpp">
+    <ClCompile Include="..\..\..\ProjectsLib\LibMarcin\NormalizationLib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ProjectsLib\LibMarcin\NormalizationLib.cpp">
+    <ClCompile Include="..\..\..\ProjectsLib\LibMarcin\ParamFromXML.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ProjectsLib\LibMarcin\ParamFromXML.cpp">
+    <ClCompile Include="..\..\..\ProjectsLib\LibMarcin\RegionU16Lib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ProjectsLib\LibMarcin\HaralickLib.cpp">
+    <ClCompile Include="..\..\..\ProjectsLib\LibMarcin\StringFcLib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ProjectsLib\LibMarcin\StringFcLib.cpp">
+    <ClCompile Include="..\..\..\ProjectsLib\tinyxml\tinystr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ProjectsLib\LibMarcin\DispLib.cpp">
+    <ClCompile Include="..\..\..\ProjectsLib\tinyxml\tinyxml.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ProjectsLib\LibMarcin\RegionU16Lib.cpp">
+    <ClCompile Include="..\..\..\ProjectsLib\tinyxml\tinyxmlerror.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ProjectsLib\LibMarcin\Functions.cpp">
+    <ClCompile Include="..\..\..\ProjectsLib\tinyxml\tinyxmlparser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\ProjectsLib\tinyxml\tinystr.h">
+    <ClInclude Include="..\..\..\ProjectsLib\LibMarcin\Functions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ProjectsLib\tinyxml\tinyxml.h">
+    <ClInclude Include="..\..\..\ProjectsLib\LibMarcin\DispLib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ProjectsLib\LibMarcin\DispLib.h">
+    <ClInclude Include="..\..\..\ProjectsLib\LibMarcin\HaralickLib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ProjectsLib\LibMarcin\HaralickLib.h">
+    <ClInclude Include="..\..\..\ProjectsLib\tinyxml\tinyxml.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ProjectsLib\LibMarcin\NormalizationLib.h">
+    <ClInclude Include="..\..\..\ProjectsLib\tinyxml\tinystr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ProjectsLib\LibMarcin\ParamFromXML.h">
+    <ClInclude Include="..\..\..\ProjectsLib\LibMarcin\StringFcLib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ProjectsLib\LibMarcin\StringFcLib.h">
+    <ClInclude Include="..\..\..\ProjectsLib\LibMarcin\RegionU16Lib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ProjectsLib\LibMarcin\RegionU16Lib.h">
+    <ClInclude Include="..\..\..\ProjectsLib\LibMarcin\ParamFromXML.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ProjectsLib\LibMarcin\Functions.h">
+    <ClInclude Include="..\..\..\ProjectsLib\LibMarcin\NormalizationLib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

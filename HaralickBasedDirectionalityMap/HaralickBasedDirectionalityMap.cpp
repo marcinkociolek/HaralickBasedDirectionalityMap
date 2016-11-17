@@ -359,12 +359,14 @@ int main(int argc, char* argv[])
 		int xTileNr = 0;
 		int yTileNr = 0;
 
-		OutString += "Tile Y\tTileX\t";
-		OutString += "Angle Contrast\tAngle Energy\tAngle Homogeneity\tAngle Correlation\tAngle\t";
-		OutString += "Angle Contrast\tAngle Energy Avg\tAngle Homogeneity Avg\tAngle Correlation Avg\t";
-		OutString += "Mean Intensity\tTile min norm\tTile max norm\t";
-		OutString += "Best Angle Contrast Count\tBest Angle Energy Count\tBest Angle Homogeneity Count\tBest Angle Correlation Count\tBest Angle Count";
-		OutString += "\n";
+		string OutDataString = "";
+
+		OutDataString += "Tile Y\tTileX\t";
+		OutDataString += "Angle Contrast\tAngle Energy\tAngle Homogeneity\tAngle Correlation\tAngle\t";
+		OutDataString += "Angle Contrast\tAngle Energy Avg\tAngle Homogeneity Avg\tAngle Correlation Avg\t";
+		OutDataString += "Mean Intensity\tTile min norm\tTile max norm\t";
+		OutDataString += "Best Angle Contrast Count\tBest Angle Energy Count\tBest Angle Homogeneity Count\tBest Angle Correlation Count\tBest Angle Count";
+		OutDataString += "\n";
 		for (int y = ProcOptions.offsetTileY; y <= (maxY - ProcOptions.offsetTileY); y += ProcOptions.shiftTileY)
 		{
 			for (int x = ProcOptions.offsetTileX; x <= (maxX - ProcOptions.offsetTileX); x += ProcOptions.shiftTileX)
@@ -636,56 +638,56 @@ int main(int argc, char* argv[])
 				cout << "\n";
 
 				// file output
-				OutString += ItoStrLS(yTileNr, 2) + "\t" + ItoStrLS(xTileNr, 2) + "\t";
+				OutDataString += ItoStrLS(yTileNr, 2) + "\t" + ItoStrLS(xTileNr, 2) + "\t";
 
 				if ((maxAngleCon >= ProcOptions.minHit) && meanCondition)
-					OutString += to_string((float)bestAngleCon * ProcOptions.angleStep) + "\t";
+					OutDataString += to_string((float)bestAngleCon * ProcOptions.angleStep) + "\t";
 				else
-					OutString += "NAN\t";
+					OutDataString += "NAN\t";
 
 				if ((maxAngleEne >= ProcOptions.minHit) && meanCondition)
-					OutString += to_string((float)bestAngleEne * ProcOptions.angleStep) + "\t";
+					OutDataString += to_string((float)bestAngleEne * ProcOptions.angleStep) + "\t";
 				else
-					OutString += "NAN\t";
+					OutDataString += "NAN\t";
 
 				if ((maxAngleHom >= ProcOptions.minHit) && meanCondition)
-					OutString += to_string((float)bestAngleHom * ProcOptions.angleStep) + "\t";
+					OutDataString += to_string((float)bestAngleHom * ProcOptions.angleStep) + "\t";
 				else
-					OutString += "NAN\t";
+					OutDataString += "NAN\t";
 
 				if ((maxAngleCor >= ProcOptions.minHit) && meanCondition)
-					OutString += to_string((float)bestAngleCor * ProcOptions.angleStep) + "\t";
+					OutDataString += to_string((float)bestAngleCor * ProcOptions.angleStep) + "\t";
 				else
-					OutString += "NAN\t";
+					OutDataString += "NAN\t";
 
 				if ((maxAngle >= ProcOptions.minHit) && meanCondition)
-					OutString += to_string((float)bestAngle * ProcOptions.angleStep) + "\t";
+					OutDataString += to_string((float)bestAngle * ProcOptions.angleStep) + "\t";
 				else
-					OutString += "NAN\t";
+					OutDataString += "NAN\t";
 
 				if (meanCondition)
 				{
-					OutString += to_string((float)bestAngleConAvg * ProcOptions.angleStep) + "\t";
-					OutString += to_string((float)bestAngleEneAvg * ProcOptions.angleStep) + "\t";
-					OutString += to_string((float)bestAngleHomAvg * ProcOptions.angleStep) + "\t";
-					OutString += to_string((float)bestAngleCorAvg * ProcOptions.angleStep) + "\t";
+					OutDataString += to_string((float)bestAngleConAvg * ProcOptions.angleStep) + "\t";
+					OutDataString += to_string((float)bestAngleEneAvg * ProcOptions.angleStep) + "\t";
+					OutDataString += to_string((float)bestAngleHomAvg * ProcOptions.angleStep) + "\t";
+					OutDataString += to_string((float)bestAngleCorAvg * ProcOptions.angleStep) + "\t";
 				}
 				else
-					OutString += "NAN\tNAN\tNAN\tNAN\t";
+					OutDataString += "NAN\tNAN\tNAN\tNAN\t";
 
 
-				OutString += to_string(meanSmallIm) + "\t" + to_string(minNorm) + "\t" + to_string(maxNorm) + "\t";
+				OutDataString += to_string(meanSmallIm) + "\t" + to_string(minNorm) + "\t" + to_string(maxNorm) + "\t";
 
-				OutString += to_string(maxAngleCon);
-				OutString += "\t";
-				OutString += to_string(maxAngleEne);
-				OutString += "\t";
-				OutString += to_string(maxAngleHom);
-				OutString += "\t";
-				OutString += to_string(maxAngleCor);
-				OutString += "\t";
-				OutString += to_string(maxAngle); //to_string((float)(maxAngle) / (float)(ProcOptions.maxOfset - ProcOptions.minOfset + 1) / (float)featCount) + "\t";
-				OutString += "\n";
+				OutDataString += to_string(maxAngleCon);
+				OutDataString += "\t";
+				OutDataString += to_string(maxAngleEne);
+				OutDataString += "\t";
+				OutDataString += to_string(maxAngleHom);
+				OutDataString += "\t";
+				OutDataString += to_string(maxAngleCor);
+				OutDataString += "\t";
+				OutDataString += to_string(maxAngle); //to_string((float)(maxAngle) / (float)(ProcOptions.maxOfset - ProcOptions.minOfset + 1) / (float)featCount) + "\t";
+				OutDataString += "\n";
 
 				if (ProcOptions.displayResult || ProcOptions.displaySmallImage)
 				{
@@ -703,6 +705,7 @@ int main(int argc, char* argv[])
 		if (ProcOptions.imgOut)
 			imwrite(ProcOptions.OutFolderName1 + InPath.filename().stem().string() + ".bmp", ImToShow);
 
+		OutString += OutDataString;
 		if (ProcOptions.textOut)
 		{
 			string TextFileName = ProcOptions.OutFolderName1 + InPath.filename().stem().string() + ".txt";
