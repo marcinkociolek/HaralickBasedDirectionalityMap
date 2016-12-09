@@ -159,10 +159,10 @@ int main(int argc, char* argv[])
 	int stepNr = (int)(180.0 / ProcOptions.angleStep); // angle step for computations (number of steps)
 
 	// data vector
-	float *Energy = new float[stepNr];
-	float *Contrast = new float[stepNr];
-	float *Correlation = new float[stepNr];
-	float *Homogenity = new float[stepNr];
+	float *EnergyVot = new float[stepNr];
+	float *ContrastVot = new float[stepNr];
+	float *CorrelationVot = new float[stepNr];
+	float *HomogenityVot = new float[stepNr];
 
 	float *EnergyAvg = new float[stepNr];
 	float *ContrastAvg = new float[stepNr];
@@ -361,11 +361,11 @@ int main(int argc, char* argv[])
 
 		string OutDataString = "";
 
-		OutDataString += "Tile Y\tTileX\t";
-		OutDataString += "Angle Contrast\tAngle Energy\tAngle Homogeneity\tAngle Correlation\tAngle\t";
-		OutDataString += "Angle Contrast\tAngle Energy Avg\tAngle Homogeneity Avg\tAngle Correlation Avg\t";
+		OutDataString += "Tile Y\tTile X\t";
+		OutDataString += "Angle Contrast Vot\tAngle Energy Vot\tAngle Homogeneity Vot\tAngle Correlation Vot\tAngle Combination Vot\t";
+		OutDataString += "Angle Contrast Avg\tAngle Energy Avg\tAngle Homogeneity Avg\tAngle Correlation Avg\t";
 		OutDataString += "Mean Intensity\tTile min norm\tTile max norm\t";
-		OutDataString += "Best Angle Contrast Count\tBest Angle Energy Count\tBest Angle Homogeneity Count\tBest Angle Correlation Count\tBest Angle Count";
+		OutDataString += "Best Angle Contrast Count\tBest Angle Energy Count\tBest Angle Homogeneity Count\tBest Angle Correlation Count\tBest Angle Combination Count";
 		OutDataString += "\n";
 		for (int y = ProcOptions.offsetTileY; y <= (maxY - ProcOptions.offsetTileY); y += ProcOptions.shiftTileY)
 		{
@@ -426,70 +426,66 @@ int main(int argc, char* argv[])
 					AnglesCor[i] = 0;
 				}
 
-				int bestAngle;
-				int maxAngle;
+				int bestAngleConVot;
+				int bestAngleEneVot;
+				int bestAngleHomVot;
+				int bestAngleCorVot;
+				int bestAngleCombVot;
 
-				int bestAngleCon;
-				int maxAngleCon;
-
-				int bestAngleEne;
-				int maxAngleEne;
-
-				int bestAngleHom;
-				int maxAngleHom;
-
-				int bestAngleCor;
-				int maxAngleCor;
-
+				int maxAngleConVot;
+				int maxAngleEneVot;
+				int maxAngleHomVot;
+				int maxAngleCombVot;
+				int maxAngleCorVot;
 
 				int bestAngleConAvg;
 				int bestAngleEneAvg;
 				int bestAngleHomAvg;
 				int bestAngleCorAvg;
 
-
 				if (meanCondition)
 				{
-
 					// ofset loop
 					for (int offset = ProcOptions.minOfset; offset <= ProcOptions.maxOfset; offset += 1)
 					{
 						for (int angleIndex = 0; angleIndex < stepNr; angleIndex++)
 						{
 							float angle = ProcOptions.angleStep * angleIndex;
-							//Mat COM; // co-occurrence matrix definition
+							
 							COM.release();
+							
 							if (ProcOptions.tileShape < 2)
 								COM = COMCardone4(SmallIm, offset, angle, ProcOptions.binCount, maxNorm, minNorm, ProcOptions.interpolation);
 							else
 								COM = COMCardoneRoi(SmallIm, Roi, offset, angle, ProcOptions.binCount, maxNorm, minNorm, ProcOptions.interpolation, 1);
+							
 							float tmpContrast, tmpEnergy, tmpHomogenity, tmpCorrelation;
-							//COMParams(COM, &Contrast[angleIndex], &Energy[angleIndex], &Homogenity[angleIndex], &Correlation[angleIndex]);
 							COMParams(COM, &tmpContrast, &tmpEnergy, &tmpHomogenity, &tmpCorrelation);
-							Contrast[angleIndex] = tmpContrast;
-							Energy[angleIndex] = tmpEnergy;
-							Homogenity[angleIndex] = tmpHomogenity;
-							Correlation[angleIndex] = tmpCorrelation;
+							
+							ContrastVot[angleIndex]		= tmpContrast;
+							EnergyVot[angleIndex]		= tmpEnergy;
+							HomogenityVot[angleIndex]	= tmpHomogenity;
+							CorrelationVot[angleIndex]	= tmpCorrelation;
 
-							ContrastAvg[angleIndex] += tmpContrast;
-							EnergyAvg[angleIndex] += tmpEnergy;
-							HomogenityAvg[angleIndex] += tmpHomogenity;
-							CorrelationAvg[angleIndex] = +tmpCorrelation;
+							ContrastAvg[angleIndex]		+= tmpContrast;
+							EnergyAvg[angleIndex]		+= tmpEnergy;
+							HomogenityAvg[angleIndex]	+= tmpHomogenity;
+							CorrelationAvg[angleIndex]	+= tmpCorrelation;
 
 						}
 						// voting best angle for ofset
 						int bestAngleContrast, bestAngleEnergy, bestAngleHomogenity, bestAngleCorrelation;
 
-						bestAngleContrast = FindBestAngleMin(Contrast, stepNr);
+						bestAngleContrast	= FindBestAngleMin(ContrastVot, stepNr);
 						AnglesCon[bestAngleContrast]++;
 
-						bestAngleEnergy = FindBestAngleMax(Energy, stepNr);
+						bestAngleEnergy		= FindBestAngleMax(EnergyVot, stepNr);
 						AnglesEne[bestAngleEnergy]++;
 						
-						bestAngleHomogenity = FindBestAngleMax(Homogenity, stepNr);
+						bestAngleHomogenity = FindBestAngleMax(HomogenityVot, stepNr);
 						AnglesHom[bestAngleHomogenity]++;
 						
-						bestAngleCorrelation = FindBestAngleMax(Correlation, stepNr);
+						bestAngleCorrelation = FindBestAngleMax(CorrelationVot, stepNr);
 						AnglesCor[bestAngleCorrelation]++;
 						
 						// combination of features
@@ -504,96 +500,97 @@ int main(int argc, char* argv[])
 					}
 					// best angle for avg
 					
-					bestAngleConAvg = FindBestAngleMin(Contrast, stepNr);
-					bestAngleEneAvg = FindBestAngleMax(Energy, stepNr);
-					bestAngleHomAvg = FindBestAngleMax(Homogenity, stepNr);
-					bestAngleCorAvg = FindBestAngleMax(Correlation, stepNr);
-
+					bestAngleConAvg = FindBestAngleMin(ContrastAvg, stepNr);
+					bestAngleEneAvg = FindBestAngleMax(EnergyAvg, stepNr);
+					bestAngleHomAvg = FindBestAngleMax(HomogenityAvg, stepNr);
+					bestAngleCorAvg = FindBestAngleMax(CorrelationAvg, stepNr);
 
 					// look for most occurring direction
-					bestAngle = 0;
-					maxAngle = Angles[0];
+					bestAngleConVot = 0;
+					maxAngleConVot = AnglesCon[0];
 					for (int i = 1; i < stepNr; i++)
 					{
-						if (maxAngle < Angles[i])
+						if (maxAngleConVot < AnglesCon[i])
 						{
-							maxAngle = Angles[i];
-							bestAngle = i;
+							maxAngleConVot = AnglesCon[i];
+							bestAngleConVot = i;
 						}
 					}
 
-					bestAngleCon = 0;
-					maxAngleCon = AnglesCon[0];
+					bestAngleEneVot = 0;
+					maxAngleEneVot = AnglesEne[0];
 					for (int i = 1; i < stepNr; i++)
 					{
-						if (maxAngleCon < AnglesCon[i])
+						if (maxAngleEneVot < AnglesEne[i])
 						{
-							maxAngleCon = AnglesCon[i];
-							bestAngleCon = i;
+							maxAngleEneVot = AnglesEne[i];
+							bestAngleEneVot = i;
 						}
 					}
 
-					bestAngleEne = 0;
-					maxAngleEne = AnglesEne[0];
+					bestAngleHomVot = 0;
+					maxAngleHomVot = AnglesHom[0];
 					for (int i = 1; i < stepNr; i++)
 					{
-						if (maxAngleEne < AnglesEne[i])
+						if (maxAngleHomVot < AnglesHom[i])
 						{
-							maxAngleEne = AnglesEne[i];
-							bestAngleEne = i;
+							maxAngleHomVot = AnglesHom[i];
+							bestAngleHomVot = i;
 						}
 					}
 
-					bestAngleHom = 0;
-					maxAngleHom = AnglesHom[0];
+					bestAngleCorVot = 0;
+					maxAngleCorVot = AnglesCor[0];
 					for (int i = 1; i < stepNr; i++)
 					{
-						if (maxAngleHom < AnglesHom[i])
+						if (maxAngleCorVot < AnglesCor[i])
 						{
-							maxAngleHom = AnglesHom[i];
-							bestAngleHom = i;
+							maxAngleCorVot = AnglesCor[i];
+							bestAngleCorVot = i;
 						}
 					}
 
-					bestAngleCor = 0;
-					maxAngleCor = AnglesCor[0];
+					bestAngleCombVot = 0;
+					maxAngleCombVot = Angles[0];
 					for (int i = 1; i < stepNr; i++)
 					{
-						if (maxAngleCor < AnglesCor[i])
+						if (maxAngleCombVot < Angles[i])
 						{
-							maxAngleCor = AnglesCor[i];
-							bestAngleCor = i;
+							maxAngleCombVot = Angles[i];
+							bestAngleCombVot = i;
 						}
 					}
 
 					// show line on image
-
-					double lineLength;
-					if (ProcOptions.lineLengthPropToConfidence)
-						lineLength = (double)(ProcOptions.lineHalfLength) / (ProcOptions.maxOfset - ProcOptions.minOfset + 1) / featCount * maxAngle;
-					else
-						lineLength = (double)(ProcOptions.lineHalfLength);
-					int lineOffsetX = (int)round(lineLength *  sin((double)(bestAngle)*ProcOptions.angleStep* PI / 180.0));
-					int lineOffsetY = (int)round(lineLength * cos((double)(bestAngle)*ProcOptions.angleStep* PI / 180.0));
-
-					if (maxAngle >= ProcOptions.minHit)
+					if (ProcOptions.displayResult || ProcOptions.displaySmallImage || ProcOptions.imgOut)
 					{
-						//line(ImToShow, Point(barCenterX - lineOffsetX, barCenterY - lineOffsetY), Point(barCenterX + lineOffsetX, barCenterY + lineOffsetY), Scalar(0, 0.0, 0.0, 0.0), ProcOptions.imposedLineThickness);
-						line(ImToShow, Point(x - lineOffsetX, y - lineOffsetY), Point(x + lineOffsetX, y + lineOffsetY), Scalar(0, 0.0, 0.0, 0.0), ProcOptions.imposedLineThickness);
-					}
+						double lineLength;
+						if (ProcOptions.lineLengthPropToConfidence)
+							lineLength = (double)(ProcOptions.lineHalfLength) / (ProcOptions.maxOfset - ProcOptions.minOfset + 1) / featCount * maxAngleCombVot;
+						else
+							lineLength = (double)(ProcOptions.lineHalfLength);
+						int lineOffsetX = (int)round(lineLength *  sin((double)(bestAngleCombVot)*ProcOptions.angleStep* PI / 180.0));
+						int lineOffsetY = (int)round(lineLength * cos((double)(bestAngleCombVot)*ProcOptions.angleStep* PI / 180.0));
 
-					if (ProcOptions.displayResult)
-					{
-						imshow("Image", ImToShow);
-					}
+						if (maxAngleCombVot >= ProcOptions.minHit)
+						{
+							//line(ImToShow, Point(barCenterX - lineOffsetX, barCenterY - lineOffsetY), Point(barCenterX + lineOffsetX, barCenterY + lineOffsetY), Scalar(0, 0.0, 0.0, 0.0), ProcOptions.imposedLineThickness);
+							line(ImToShow, Point(x - lineOffsetX, y - lineOffsetY), Point(x + lineOffsetX, y + lineOffsetY), Scalar(0, 0.0, 0.0, 0.0), ProcOptions.imposedLineThickness);
+						}
 
-					if (ProcOptions.displaySmallImage)
-					{
-						//Mat SmallImToShow = ShowImageF32PseudoColor(SmallIm, minNorm, maxNorm);
-						SmallImToShow.release();
-						SmallImToShow = ShowImageF32PseudoColor(SmallIm, minNorm, maxNorm);
-						line(SmallImToShow, Point(SmallImToShow.cols / 2 - lineOffsetX, SmallImToShow.rows / 2 - lineOffsetY), Point(SmallImToShow.cols / 2 + lineOffsetX, SmallImToShow.rows / 2 + lineOffsetY), Scalar(0, 0.0, 0.0, 0.0), ProcOptions.imposedLineThickness);
-						imshow("ImageSmall", ShowSolidRegionOnImage(GetContour5(Roi), SmallImToShow));
+						if (ProcOptions.displayResult)
+						{
+							imshow("Image", ImToShow);
+						}
+
+						if (ProcOptions.displaySmallImage)
+						{
+							//Mat SmallImToShow = ShowImageF32PseudoColor(SmallIm, minNorm, maxNorm);
+							SmallImToShow.release();
+							SmallImToShow = ShowImageF32PseudoColor(SmallIm, minNorm, maxNorm);
+							line(SmallImToShow, Point(SmallImToShow.cols / 2 - lineOffsetX, SmallImToShow.rows / 2 - lineOffsetY), Point(SmallImToShow.cols / 2 + lineOffsetX, SmallImToShow.rows / 2 + lineOffsetY), Scalar(0, 0.0, 0.0, 0.0), ProcOptions.imposedLineThickness);
+							imshow("ImageSmall", ShowSolidRegionOnImage(GetContour5(Roi), SmallImToShow));
+						}
 					}
 				}
 				
@@ -601,36 +598,36 @@ int main(int argc, char* argv[])
 				cout << yTileNr << "\t" << xTileNr;
 				
 				cout << "\t" << "ACon = ";
-				if ((maxAngleCon >= ProcOptions.minHit) && meanCondition)
-					cout << to_string(bestAngleCon*ProcOptions.angleStep);
+				if ((maxAngleConVot >= ProcOptions.minHit) && meanCondition)
+					cout << to_string(bestAngleConVot*ProcOptions.angleStep);
 				else
 					cout << "NaN";
 				cout << "\t";
 
 				cout << "\t" << "AEne = ";
-				if ((maxAngleEne >= ProcOptions.minHit) && meanCondition)
-					cout << to_string(bestAngleEne*ProcOptions.angleStep);
+				if ((maxAngleEneVot >= ProcOptions.minHit) && meanCondition)
+					cout << to_string(bestAngleEneVot*ProcOptions.angleStep);
 				else
 					cout << "NaN";
 				cout << "\t";
 
 				cout << "\t" << "AHom = ";
-				if ((maxAngleHom >= ProcOptions.minHit) && meanCondition)
-					cout << to_string(bestAngleHom*ProcOptions.angleStep);
+				if ((maxAngleHomVot >= ProcOptions.minHit) && meanCondition)
+					cout << to_string(bestAngleHomVot*ProcOptions.angleStep);
 				else
 					cout << "NaN";
 				cout << "\t";
 
 				cout << "\t" << "ACor = ";
-				if ((maxAngleCor >= ProcOptions.minHit) && meanCondition)
-					cout << to_string(bestAngleCor*ProcOptions.angleStep);
+				if ((maxAngleCorVot >= ProcOptions.minHit) && meanCondition)
+					cout << to_string(bestAngleCorVot*ProcOptions.angleStep);
 				else
 					cout << "NaN";
 				cout << "\t";
 
 				cout << "\t" << "A = ";
-				if ((maxAngle >= ProcOptions.minHit) && meanCondition)
-					cout << to_string(bestAngle*ProcOptions.angleStep);
+				if ((maxAngleCombVot >= ProcOptions.minHit) && meanCondition)
+					cout << to_string(bestAngleCombVot*ProcOptions.angleStep);
 				else
 					cout << "NaN";
 				cout << "\t";
@@ -640,28 +637,28 @@ int main(int argc, char* argv[])
 				// file output
 				OutDataString += ItoStrLS(yTileNr, 2) + "\t" + ItoStrLS(xTileNr, 2) + "\t";
 
-				if ((maxAngleCon >= ProcOptions.minHit) && meanCondition)
-					OutDataString += to_string((float)bestAngleCon * ProcOptions.angleStep) + "\t";
+				if ((maxAngleConVot >= ProcOptions.minHit) && meanCondition)
+					OutDataString += to_string((float)bestAngleConVot * ProcOptions.angleStep) + "\t";
 				else
 					OutDataString += "NAN\t";
 
-				if ((maxAngleEne >= ProcOptions.minHit) && meanCondition)
-					OutDataString += to_string((float)bestAngleEne * ProcOptions.angleStep) + "\t";
+				if ((maxAngleEneVot >= ProcOptions.minHit) && meanCondition)
+					OutDataString += to_string((float)bestAngleEneVot * ProcOptions.angleStep) + "\t";
 				else
 					OutDataString += "NAN\t";
 
-				if ((maxAngleHom >= ProcOptions.minHit) && meanCondition)
-					OutDataString += to_string((float)bestAngleHom * ProcOptions.angleStep) + "\t";
+				if ((maxAngleHomVot >= ProcOptions.minHit) && meanCondition)
+					OutDataString += to_string((float)bestAngleHomVot * ProcOptions.angleStep) + "\t";
 				else
 					OutDataString += "NAN\t";
 
-				if ((maxAngleCor >= ProcOptions.minHit) && meanCondition)
-					OutDataString += to_string((float)bestAngleCor * ProcOptions.angleStep) + "\t";
+				if ((maxAngleCorVot >= ProcOptions.minHit) && meanCondition)
+					OutDataString += to_string((float)bestAngleCorVot * ProcOptions.angleStep) + "\t";
 				else
 					OutDataString += "NAN\t";
 
-				if ((maxAngle >= ProcOptions.minHit) && meanCondition)
-					OutDataString += to_string((float)bestAngle * ProcOptions.angleStep) + "\t";
+				if ((maxAngleCombVot >= ProcOptions.minHit) && meanCondition)
+					OutDataString += to_string((float)bestAngleCombVot * ProcOptions.angleStep) + "\t";
 				else
 					OutDataString += "NAN\t";
 
@@ -678,15 +675,15 @@ int main(int argc, char* argv[])
 
 				OutDataString += to_string(meanSmallIm) + "\t" + to_string(minNorm) + "\t" + to_string(maxNorm) + "\t";
 
-				OutDataString += to_string(maxAngleCon);
+				OutDataString += to_string(maxAngleConVot);
 				OutDataString += "\t";
-				OutDataString += to_string(maxAngleEne);
+				OutDataString += to_string(maxAngleEneVot);
 				OutDataString += "\t";
-				OutDataString += to_string(maxAngleHom);
+				OutDataString += to_string(maxAngleHomVot);
 				OutDataString += "\t";
-				OutDataString += to_string(maxAngleCor);
+				OutDataString += to_string(maxAngleCorVot);
 				OutDataString += "\t";
-				OutDataString += to_string(maxAngle); //to_string((float)(maxAngle) / (float)(ProcOptions.maxOfset - ProcOptions.minOfset + 1) / (float)featCount) + "\t";
+				OutDataString += to_string(maxAngleCombVot); //to_string((float)(maxAngle) / (float)(ProcOptions.maxOfset - ProcOptions.minOfset + 1) / (float)featCount) + "\t";
 				OutDataString += "\n";
 
 				if (ProcOptions.displayResult || ProcOptions.displaySmallImage)
