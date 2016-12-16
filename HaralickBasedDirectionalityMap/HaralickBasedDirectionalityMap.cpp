@@ -424,6 +424,11 @@ int main(int argc, char* argv[])
 					AnglesEne[i] = 0;
 					AnglesHom[i] = 0;
 					AnglesCor[i] = 0;
+
+					EnergyAvg[i] = 0;
+					ContrastAvg[i] = 0;
+					CorrelationAvg[i] = 0;
+					HomogenityAvg[i] = 0;
 				}
 
 				int bestAngleConVot;
