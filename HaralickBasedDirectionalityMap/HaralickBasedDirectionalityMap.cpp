@@ -32,6 +32,8 @@
 
 #define PI 3.14159265
 
+#define SaveAvgCorrValues
+
 using namespace cv;
 using namespace std;
 using namespace boost;
@@ -366,6 +368,14 @@ int main(int argc, char* argv[])
 		OutDataString += "Angle Contrast Avg\tAngle Energy Avg\tAngle Homogeneity Avg\tAngle Correlation Avg\t";
 		OutDataString += "Mean Intensity\tTile min norm\tTile max norm\t";
 		OutDataString += "Best Angle Contrast Count\tBest Angle Energy Count\tBest Angle Homogeneity Count\tBest Angle Correlation Count\tBest Angle Combination Count";
+#ifdef SaveAvgCorrValues
+		OutDataString += "\t";
+		for (int i = 0; i < stepNr; i++)
+		{
+			OutDataString += "\t";
+			OutDataString += to_string(i);
+		}
+#endif
 		OutDataString += "\n";
 		for (int y = ProcOptions.offsetTileY; y <= (maxY - ProcOptions.offsetTileY); y += ProcOptions.shiftTileY)
 		{
@@ -689,6 +699,14 @@ int main(int argc, char* argv[])
 				OutDataString += to_string(maxAngleCorVot);
 				OutDataString += "\t";
 				OutDataString += to_string(maxAngleCombVot); //to_string((float)(maxAngle) / (float)(ProcOptions.maxOfset - ProcOptions.minOfset + 1) / (float)featCount) + "\t";
+#ifdef SaveAvgCorrValues
+				OutDataString += "\t";
+				for (int i = 0; i < stepNr; i++)
+				{
+					OutDataString += "\t";
+					OutDataString += to_string(CorrelationAvg[i]);
+				}
+#endif
 				OutDataString += "\n";
 
 				if (ProcOptions.displayResult || ProcOptions.displaySmallImage)
